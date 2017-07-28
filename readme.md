@@ -1,4 +1,4 @@
-## Code for reproducing simulations and analyses in "P-splines with an l1 penalty for repeated measures" by Segal, et al. (2017).
+## Code for reproducing simulations and analyses in "P-splines with an l1 penalty for repeated measures" by Segal, et al. (submitted).
 
 The accompanying R package is available at [https://github.com/bdsegal/psplinesl1](https://github.com/bdsegal/psplinesl1).
 
@@ -25,4 +25,4 @@ The accompanying R package is available at [https://github.com/bdsegal/psplinesl
     2. `approx_inference_plots.R`: Plots demonstrating our approximate inference approach.
 
 ### References
-Segal, B. D., Elliott, M. R., Braun, T., and Jiang, H. (2017). P-splines with an l1 penalty for repeated measures. Available at [https://arxiv.org/abs/1707.08933](https://arxiv.org/abs/1707.08933).
+Segal, B. D., Elliott, M. R., Braun, T., and Jiang, H. (submitted). P-splines with an l1 penalty for repeated measures. Available at [https://arxiv.org/abs/1707.08933](https://arxiv.org/abs/1707.08933).
