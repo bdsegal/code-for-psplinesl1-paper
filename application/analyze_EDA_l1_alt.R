@@ -29,6 +29,11 @@ rand <- re(x = "x", id = "id", data = data,
             randomCurves = TRUE,  width = 5, 
             norder = 4, derivOrder = 2)
 
+S <- diag(1, nrow(rand$S))
+colnames(S) <- colnames(rand$S)
+rownames(S) <- rownames(rand$S)
+rand$S <- S
+
 # fitting one path at a time --------------------------------------------------
 system.time({cvOut <- cv(y = "y", X = X,
              rand = rand,
@@ -40,15 +45,14 @@ system.time({cvOut <- cv(y = "y", X = X,
 
 save(cvOut, file = "cvOut_EDA_smoothInit0.Rdata")
 
-#  could also fit with diag:
-# S = diag(1, nrow(rand$S)
-
 # To do: implement lme for random curves
 system.time({
-  m1 <- admm(y = "y", X = X, Z = rand$Z, S = rand$S,
+  m1 <- admm(y = "y", X = X, rand = rand,
              id = "id",
-             tau = 450,
-             lambda = c(1, 10),
+             tau = 0.05,
+             lambda = c(0.09, .5),
+             # tau = 450,
+             # lambda = c(1, 10),
              # tau = 10,
              # lambda = c(0.5, 5),
              rho = 5,
@@ -61,34 +65,34 @@ system.time({
              centerZ = FALSE)
 })
  #   user  system elapsed 
- # 10.792   0.052  10.858
+ # 11.108   0.028  11.154 
 
 m1$conv$iter
-# [1] 300
+# [1] 323
 
 signif(m1$fit$df, 3)
-#                  Overall    F1    F2   Z
-# Stein                185  9.98  1.97 172
-# Restricted           194 10.00  2.00 181
-# ADMM                 193  9.00  2.00 181
-# Ridge                196 19.50  8.00 167
-# Ridge restricted     216 21.10 13.50 181
+#                  Overall   F1   F2   Z
+# Stein                470 12.0  2.0 455
+# Restricted           483 12.0  2.0 468
+# ADMM                 482 11.0  2.0 468
+# Ridge                471 19.9 10.6 439
+# Ridge restricted     519 27.6 22.5 468
 
 plot(log(m1$conv$rNorm))
 plot(log(m1$conv$sNorm))
 
 m1$coefs$beta0
-# [1] -0.9897339
+# [1] -1.067598
 
 #sigma2b
 m1$fit$sigma2 / m1$params$tau
-# [1] 4.852319e-05
+# [1] 0.1792059
 
 m1$fit$sigma2
-# [1] 0.02183543
+# [1] 0.008960295
 
 m1$fit$sigma2Ridge
-# [1] 0.02198702
+# [1] 0.008967313
 
 data$yHat <- m1$fit$yHat
 data$randEff <- with(m1, as.vector(params$Z %*% coefs$b))
@@ -116,8 +120,8 @@ ggplot(aes(x = x, y = y, group = id), data = CIpoly)+
   theme_bw(28)+
   labs(x = "Minute", y = expression(paste("lo",g[10], "(EDA)", sep = "")))+
   scale_y_continuous(lim = c(-3,1))
-ggsave(file.path(paperPath, "EDA_L1_smooth1_poster.png"))
-ggsave(file.path(presentPath, "EDA_L1_smooth1_poster.png"))
+ggsave(file.path(paperPath, "EDA_L1_smooth1_poster_alt.png"))
+ggsave(file.path(presentPath, "EDA_L1_smooth1_poster_alt.png"))
 
 CIpoly <- data.frame(x = c(CI[[2]]$x, rev(CI[[2]]$x)), 
                      y = c(CI[[2]]$yLowerBayesQuick, rev(CI[[2]]$yUpperBayesQuick)),
@@ -131,8 +135,8 @@ ggplot(aes(x = x, y = y, group = id), data = CIpoly)+
   geom_hline(yintercept = 0, linetype = "dashed")+
   labs(x = "Minute", y = expression(paste("lo",g[10], "(EDA)", sep = "")))+
   scale_y_continuous(lim = c(-1, 1))
-ggsave(file.path(paperPath, "EDA_L1_smooth2_poster.png"))
-ggsave(file.path(presentPath, "EDA_L1_smooth2_poster.png"))
+ggsave(file.path(paperPath, "EDA_L1_smooth2_poster_alt.png"))
+ggsave(file.path(presentPath, "EDA_L1_smooth2_poster_alt.png"))
 
 # predicted curves
 dataM <- melt(data, id.vars = c("x", "id", "type"),
@@ -169,5 +173,5 @@ guides(alpha = guide_legend(
       )+
 theme(legend.position = "bottom")+
   facet_wrap(~type)
-ggsave(file.path(paperPath, "EDA_L1_obs_pred.png"))
-ggsave(file.path(presentPath, "EDA_L1_obs_pred.png"))
+ggsave(file.path(paperPath, "EDA_L1_obs_pred_alt.png"))
+ggsave(file.path(presentPath, "EDA_L1_obs_pred_alt.png"))

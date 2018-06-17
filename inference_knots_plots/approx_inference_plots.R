@@ -33,16 +33,16 @@ beta0 <- model$coefs$beta0
 Hrho <- F %*% solve(crossprod(F) + rho * crossprod(D), t(F))
 Hlambda <- F %*% solve(crossprod(F) + lambda * crossprod(D), t(F))
 
-yb <- y - beta0 - rand$Z %*% b
+yj <- y - beta0 - rand$Z %*% b
 for (l in (1:J)[-j]) {
-  Fs <- model$params$X[[s]]$F
-  betas <- model$coefs$beta[[s]]
-  yb <- yb - Fs %*% betas
+  Fl <- model$params$X[[l]]$F
+  betal <- model$coefs$beta[[l]]
+  yj <- yj - Fl %*% betal
 }
 
 R <- as.vector(rho * solve(crossprod(F) + rho * crossprod(D), crossprod(D, w - u)))
-Hy <- as.vector(Hlambda %*% yb)
-HyR <- as.vector(Hrho %*% yb + F %*% R)
+Hy <- as.vector(Hlambda %*% yj)
+HyR <- as.vector(Hrho %*% yj + F %*% R)
 # Hr <- rho * F %*% solve(t(F) %*% F + rho * t(D) %*% D, t(D))
 
 if (j == 1) {

@@ -1,6 +1,4 @@
-###############################################
-# Plotting EDA measurements from E3 Wristband #
-###############################################
+# Plotting EDA measurements from E3 Wristband
 
 library(ggplot2)
 
@@ -304,3 +302,8 @@ ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
   labs(x = "Minute", y = expression(paste("lo",g[10],"(EDA + 0.001)")))+
   scale_color_discrete("Vigilance", labels = c("Low", "High"))
 ggsave(file.path(paperPath, "groupA_processed.png"))
+
+groupA <- read.csv(file.path(path, "groupA.csv"))
+library(dplyr)
+groupA %>% group_by(type, id) %>%
+  summarize(n = n())

@@ -39,9 +39,9 @@ k <- basis$nbasis
 # fit model
 g2 <- gamm(y ~ s(x, bs = "ps", m = c(2, 2), k = k) + 
                s(x, bs = "ps", m = c(2, 2), k = k, by = high),
-               correlation = corCAR1(form = ~x|id), 
-               # random = list(id = pdIdent(~Z - 1)),
-               random = list(id = pdSymm(~x), id = pdIdent(~Z - 1)), 
+               # correlation = corCAR1(form = ~x|id), 
+               random = list(id = pdIdent(~Z - 1)),
+               # random = list(id = pdSymm(~x), id = pdIdent(~Z - 1)), 
            method = "REML",    
            data = data)
 
@@ -69,6 +69,17 @@ summary(g2$gam)
 # R-sq.(adj) =  0.273   
 #   Scale est. = 0.01502   n = 1700
 plot(g2$gam)
+
+VC <- VarCorr(g2$lme)
+lambdaGAMM <-as.numeric(VC[nrow(VC), 1]) / as.numeric(VC[2,1])
+tauGAMM <-as.numeric(VC[nrow(VC), 1]) / as.numeric(VC[nrow(VC) - 1,1])
+cbind(tauGAMM, lambdaGAMM)
+#         tauGAMM lambdaGAMM
+# [1,] 0.01016958  0.6052437
+
+# sigma2epsilon, sigma2beta, sigma2b
+c(as.numeric(VC[nrow(VC), 1]), as.numeric(VC[2,1]), as.numeric(VC[nrow(VC) - 1,1]))
+# [1] 0.01062245 0.01755070 1.04453170
 
 # matplot(matrix(predict(g2$lme), nrow = 100), type = "l")
 

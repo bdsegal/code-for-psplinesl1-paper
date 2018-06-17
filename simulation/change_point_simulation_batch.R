@@ -60,7 +60,6 @@ for (iter in 1:100) {
 
   newDat <- newDat[with(newDat, order(id, x)), ]
   n <- table(newDat$id)
-  N <- length(newDat$n)
 
   # Fit models ------------------------------------------------------------------
 
@@ -87,7 +86,7 @@ for (iter in 1:100) {
               verbose = 2
               )
 
-  a1 <- admm(y = "y", X = X, Z = rand$Z, S = rand$S,
+  a1 <- admm(y = "y", id = "id", X = X, rand = rand,
                lambda = cvOut$smoothOpt[2:(length(X)+1)],
                tau = cvOut$smoothOpt[1],
                rho = min(max(cvOut$smoothOpt), 5),

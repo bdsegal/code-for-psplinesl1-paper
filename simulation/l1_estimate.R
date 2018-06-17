@@ -12,8 +12,8 @@ presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/present
 posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
 
 # load existing data
-simData = read.csv("simData.csv")
-trueMean = read.csv("trueMean.csv")
+data(simData)
+data(trueMean)
 
 # with L1 P-splines -----------------------------------------------------------
 
@@ -28,9 +28,12 @@ system.time({cvOut <- cv(y = "y", X = X,
              rand = rand,
              id = "id",
              K = 5,
-             data = simData)})
+             smoothInit = c(0, 0),
+             lmeUpdate = FALSE,
+             data = simData,
+             se1 = FALSE)})
  #   user  system elapsed 
- # 14.988   0.040  15.053 
+ # 14.988   0.040  15.053
 
 dev.new(width = 9, height = 5)
 cvOut
@@ -38,12 +41,13 @@ ggsave(file.path(presentPath, "cv.png"))
 
 cvOut$smoothOpt
 #        tau    lambda1 
-# 0.05022336 0.16874138 
+# 0.02739983 0.16874138 
 
 system.time({
-  a1 <- admm(y = "y", X = X, Z = rand$Z, S = rand$S,
+  a1 <- admm(y = "y", id = "id", X = X, rand = rand,
              lambda = cvOut$smoothOpt[2:(length(X)+1)],
              tau = cvOut$smoothOpt[1],
+             lmeUpdate = TRUE,
              rho = min(5, max(cvOut$smoothOpt)),
              centerZ = FALSE,
              data = simData,
@@ -51,35 +55,33 @@ system.time({
              )
   })
   #  user  system elapsed 
-  # 0.192   0.000   0.195 
-
+  # 4.376   0.004   4.385 
 a1$conv$iter
-# 256
+# 244
 
 plot(log(a1$conv$rNorm))
 plot(log(a1$conv$sNorm))
 
 a1$fit$sigma2
-# [1] 0.01041414
+# [1] 0.009289998
 
 sum(a1$fit$residuals^2)
-# [1] 4.066204
+# [1] 4.047725
 
 signif(a1$fit$df, 3)
 #                  Overall   F1    Z
-# Stein               59.5  9.0 49.5
-# Restricted          59.7  9.0 49.7
-# ADMM                58.7  8.0 49.7
-# Ridge               68.2 17.6 49.5
-# Ridge restricted    68.5 17.8 49.7
+# Stein               14.3 10.0 3.29
+# Restricted          14.6 10.0 3.63
+# ADMM                13.6  9.0 3.63
+# Ridge               22.1 17.7 3.31
+# Ridge restricted    22.4 17.8 3.63
 
 #sigma2b
-a1$fit$sigma2 / cvOut$smoothOpt[1]
-# 0.2073564
+a1$fit$sigma2b
+# [1] 1.064899
 
 # confidence bands
 CI <- ci(model = a1, alpha = 0.05)
-CI
 
 Fmarg <- eval.basis(trueMean$x, a1$params$X[[1]]$basis) %*% X[[1]]$Q
 outOfRange <- which(trueMean$x < min(simData$x) | trueMean$x > max(simData$x))

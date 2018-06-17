@@ -14,8 +14,8 @@ presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/present
 posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
 
 # load existing data
-simData = read.csv("simData.csv")
-trueMean = read.csv("trueMean.csv")
+data(simData)
+data(trueMean)
 
 # l2 models
 m1 <- gamm(y ~ s(x, bs = "ps", m = c(0,1), k = 21), data = simData, 
