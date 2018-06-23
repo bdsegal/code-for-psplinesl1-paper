@@ -89,7 +89,7 @@ trueMean$yHat <- a1$coef$beta0 + Fmarg %*% a1$coef$beta[[1]]
 trueMean$yHat[outOfRange] <- NA
 
 CIpoly <- data.frame(x = c(CI[[1]]$x, rev(CI[[1]]$x)), 
-                     y = c(CI[[1]]$yLowerBayesQuick, rev(CI[[1]]$yUpperBayesQuick)))
+                     y = c(CI[[1]]$lower, rev(CI[[1]]$upper)))
 
 dev.new()              
 ggplot(aes(x = x, y = y), data = simData)+
@@ -104,7 +104,7 @@ ggsave(file.path(presentPath,"l1_changePoint_CI_ord2_Bayes_poster.png"))
 
 # example plot for package using only CI and no baseline truth
 CIpoly <- data.frame(x = c(CI[[1]]$x, rev(CI[[1]]$x)), 
-                     y = c(CI[[1]]$yLowerBayesQuick, rev(CI[[1]]$yUpperBayesQuick)))
+                     y = c(CI[[1]]$lower, rev(CI[[1]]$upper)))
 
 ggplot(aes(x = x, y = y), data = simData)+
   geom_polygon(data = CIpoly, fill = "grey")+

@@ -96,7 +96,7 @@ trueMean$yHat <- a1$coef$beta0 + Fmarg %*% a1$coef$beta[[1]]
 trueMean$yHat[outOfRange] <- NA
 
 CIpoly <- data.frame(x = c(CI[[1]]$x, rev(CI[[1]]$x)), 
-                     y = c(CI[[1]]$yLowerBayesQuick, rev(CI[[1]]$yUpperBayesQuick)))
+                     y = c(CI[[1]]$lower, rev(CI[[1]]$upper)))
 
 dev.new()              
 ggplot(aes(x = x, y = y), data = simData2groups)+
@@ -115,7 +115,7 @@ trueInteraction$yHat <- Fmarg %*% a1$coef$beta[[2]]
 trueInteraction$yHat[outOfRange] <- NA
 
 CIpoly <- data.frame(x = c(CI[[2]]$x, rev(CI[[2]]$x)), 
-                     y = c(CI[[2]]$yLowerBayesQuick, rev(CI[[2]]$yUpperBayesQuick)))
+                     y = c(CI[[2]]$lower, rev(CI[[2]]$upper)))
 
 dev.new()              
 ggplot(aes(x = x, y = y), data = simData2groups)+

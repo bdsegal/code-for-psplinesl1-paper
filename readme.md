@@ -15,6 +15,7 @@ The accompanying R package is available at [https://github.com/bdsegal/psplinesl
     8. `change_point_simulation_assess.R` Plot the results of the change point simulation.
     9. `l1_estimate_2groups.R`: Fit the l1-penalized model to simData2groups.
     10. `l2_estimate_2groups.R`: Fit the l2-penalized model to simData2groups.
+    11. `coverage_prob_simulation.R`: Simulate coverage probability and confidence interval width.
 2. `application`: Code for the analysis of electrodermal activity (EDA) data collected as part of a stress study.
     1. `process_data.R`: pre-process raw data.
     2. `analyze_EDA_l1.R`: Fit the l1-penalized model.
