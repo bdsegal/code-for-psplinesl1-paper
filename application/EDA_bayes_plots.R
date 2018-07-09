@@ -148,7 +148,7 @@ dataM$type <- factor(dataM$type, levels = c("low", "high"))
 levels(dataM$type) <- c("Low vigilance", "High vigilance")
 
 ID <- unique(dataM$id)
-gg <- ggplot() + theme_bw(26) +
+gg <- ggplot() + theme_bw(20) +
       # scale_color_manual("", values = c("grey", "black"), labels = c("Observed", "Predicted"))+
       scale_color_manual(guid = FALSE, "", values = c("blue", "red"), labels = c("High", "Low"))+
       scale_alpha_manual("", values = c(.3, 1), labels = c("Observed", "Predicted"))+

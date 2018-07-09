@@ -60,6 +60,7 @@ Zbreve2 <- as.matrix(Zbreve[, (q1+1):ncol(Zbreve)])
 Lambda1Sqrt <- diag(sqrt(eig$values[1:q1]))
 Zcheck1 <- Zbreve1 %*% Lambda1Sqrt
 
+system.time({
 g1 <- gamm(y ~ s(x, bs = "ps", m = c(2, 2), k = k) + 
                s(x, bs = "ps", m = c(2, 2), k = k, by = high),
                # random = list(id = pdIdent(~Zcheck1 - 1)),
@@ -67,6 +68,9 @@ g1 <- gamm(y ~ s(x, bs = "ps", m = c(2, 2), k = k) +
                              id = pdIdent(~Zbreve2 - 1)),
            method = "REML",    
            data = data)
+})
+#    user  system elapsed 
+# 165.072   0.708 165.947 
 
 plot(g1$gam)
 summary(g1$gam)
@@ -148,7 +152,7 @@ levels(dataM$type) <- c("Low vigilance", "High vigilance")
 
 ID <- unique(dataM$id)
 
-gg <- ggplot() + theme_bw(26) +
+gg <- ggplot() + theme_bw(20) +
       scale_color_manual(guid = FALSE, "", values = c("blue", "red"), labels = c("High", "Low"))+
       scale_alpha_manual("", values = c(.3, 1), labels = c("Observed", "Predicted"))+
       scale_linetype_manual("", values = c("solid", "dashed"), labels = c("Observed", "Predicted"))+
@@ -176,3 +180,6 @@ theme(legend.position = "bottom")+
 facet_wrap(~type)
 ggsave(file.path(paperPath, "l2Pred.png"))
 
+# MSE
+with(data, mean((y - yHat)^2))
+# [1] 0.03478479

@@ -37,13 +37,15 @@ Z <- eval.basis(data$x, basis)
 k <- basis$nbasis
 
 # fit model
+system.time({
 g2 <- gamm(y ~ s(x, bs = "ps", m = c(2, 2), k = k) + 
                s(x, bs = "ps", m = c(2, 2), k = k, by = high),
-               # correlation = corCAR1(form = ~x|id), 
-               random = list(id = pdIdent(~Z - 1)),
-               # random = list(id = pdSymm(~x), id = pdIdent(~Z - 1)), 
+               correlation = corCAR1(form = ~x|id), 
+               random = list(id = pdSymm(~x), id = pdIdent(~Z - 1)), 
            method = "REML",    
            data = data)
+})
+
 
 summary(g2$gam)
 # Family: gaussian 
@@ -141,7 +143,7 @@ levels(dataM$type) <- c("Low vigilance", "High vigilance")
 
 ID <- unique(dataM$id)
 
-gg <- ggplot() + theme_bw(26) +
+gg <- ggplot() + theme_bw(20) +
       scale_color_manual(guid = FALSE, "", values = c("blue", "red"), labels = c("High", "Low"))+
       scale_alpha_manual("", values = c(.3, 1), labels = c("Observed", "Predicted"))+
       scale_linetype_manual("", values = c("solid", "dashed"), labels = c("Observed", "Predicted"))+
@@ -168,3 +170,7 @@ guides(alpha = guide_legend(
 theme(legend.position = "bottom")+
 facet_wrap(~type)
 ggsave(file.path(paperPath, "l2Pred_alt.png"))
+
+# MSE
+with(data, mean((y - yHat)^2))
+# [1] 0.007641615

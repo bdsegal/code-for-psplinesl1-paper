@@ -30,27 +30,22 @@ rand <- re(x = "x", id = "id", data = data,
             norder = 4, derivOrder = 2)
 
 # fitting one path at a time --------------------------------------------------
-system.time({cvOut <- cv(y = "y", X = X,
-             rand = rand,
-             id = "id",
-             K = 3,
-             data = data,
-             se1 = FALSE)
-             })
+# system.time({cvOut <- cv(y = "y", X = X,
+#              rand = rand,
+#              id = "id",
+#              K = 3,
+#              data = data,
+#              se1 = FALSE)
+#              })
 
-save(cvOut, file = "cvOut_EDA_smoothInit0.Rdata")
-
-#  could also fit with diag:
-# S = diag(1, nrow(rand$S)
+# save(cvOut, file = "cvOut_EDA_smoothInit0.Rdata")
 
 # To do: implement lme for random curves
 system.time({
-  m1 <- admm(y = "y", X = X, Z = rand$Z, S = rand$S,
+  m1 <- admm(y = "y", X = X, rand = rand,
              id = "id",
              tau = 450,
              lambda = c(1, 10),
-             # tau = 10,
-             # lambda = c(0.5, 5),
              rho = 5,
              epsilonAbs = 1e-4,
              epsilonRel = 1e-4,
@@ -91,7 +86,7 @@ m1$fit$sigma2Ridge
 # [1] 0.02198702
 
 data$yHat <- m1$fit$yHat
-data$randEff <- with(m1, as.vector(params$Z %*% coefs$b))
+data$randEff <- with(m1, as.vector(params$rand$Z %*% coefs$b))
 data$bRem <- with(data, y - randEff)
 
 # residuals
@@ -103,9 +98,10 @@ ggsave(file.path(paperPath, "EDA_L1_resid_2.png"))
 
 # confidence bands
 CI <- ci(model = m1, alpha = 0.05)
+plot(CI)
 
 CIpoly <- data.frame(x = c(CI[[1]]$x, rev(CI[[1]]$x)), 
-                     y = c(CI[[1]]$yLowerBayesQuick, rev(CI[[1]]$yUpperBayesQuick)),
+                     y = c(CI[[1]]$lower, rev(CI[[1]]$upper)),
                      id = 0)
 
 CIpoint <- data.frame(x= CI[[1]]$x, y = CI[[1]]$smooth, id = 0)
@@ -120,7 +116,7 @@ ggsave(file.path(paperPath, "EDA_L1_smooth1_poster.png"))
 ggsave(file.path(presentPath, "EDA_L1_smooth1_poster.png"))
 
 CIpoly <- data.frame(x = c(CI[[2]]$x, rev(CI[[2]]$x)), 
-                     y = c(CI[[2]]$yLowerBayesQuick, rev(CI[[2]]$yUpperBayesQuick)),
+                     y = c(CI[[2]]$lower, rev(CI[[2]]$upper)),
                      id = 0)
 CIpoint <- data.frame(x= CI[[2]]$x, y = CI[[2]]$smooth, id = 0)
             
@@ -141,7 +137,7 @@ dataM$type <- factor(dataM$type, levels = c("low", "high"))
 levels(dataM$type) <- c("Low vigilance", "High vigilance")
 
 ID <- unique(dataM$id)
-gg <- ggplot() + theme_bw(26) +
+gg <- ggplot() + theme_bw(20) +
       # scale_color_manual("", values = c("grey", "black"), labels = c("Observed", "Predicted"))+
       scale_color_manual(guid = FALSE, "", values = c("blue", "red"), labels = c("High", "Low"))+
       scale_alpha_manual("", values = c(.3, 1), labels = c("Observed", "Predicted"))+
@@ -157,7 +153,7 @@ for (i in 1:length(ID)) {
 }
 
 dev.new(width = 9.5, height = 6.5)
-gg  +
+gg +
 guides(alpha = guide_legend(
                  keywidth=0.35,
                  keyheight=0.35,
@@ -171,3 +167,7 @@ theme(legend.position = "bottom")+
   facet_wrap(~type)
 ggsave(file.path(paperPath, "EDA_L1_obs_pred.png"))
 ggsave(file.path(presentPath, "EDA_L1_obs_pred.png"))
+
+# MSE
+with(data, mean((y - yHat)^2))
+# [1] 0.01945408

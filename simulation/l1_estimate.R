@@ -41,7 +41,7 @@ ggsave(file.path(presentPath, "cv.png"))
 
 cvOut$smoothOpt
 #        tau    lambda1 
-# 0.02739983 0.16874138 
+# 0.02893064 0.17816884 
 
 system.time({
   a1 <- admm(y = "y", id = "id", X = X, rand = rand,

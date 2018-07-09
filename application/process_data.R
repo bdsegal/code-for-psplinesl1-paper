@@ -103,11 +103,11 @@ for (g in c("A")) {
       ylim = c(0, 7), xlim = c(0, 10000 / 60),
       main = paste(v, " vigilance", sep = ""), 
       xlab = "Minute", ylab = "EDA",
-      cex.lab = 1.75, cex.axis = 1.75, cex.main = 1.75)
+      cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5)
     # abline(v = EDAlist[[subj[1]]]$tags$sec, lty = 3)
     for (i in 2:length(subj)) {
       points(x = EDAlist[[subj[i]]]$data$sec / 60, y = EDAlist[[subj[i]]]$data$raw,
-        type = "l", cex.lab = 1.75, cex.axis = 1.75, col = i)
+        type = "l", cex.lab = 1.5, cex.axis = 1.5, col = i)
     }
   }
 }
@@ -249,11 +249,11 @@ png(filename = file.path(paperPath, "thinned.png"))
 par(mar = marDefault + c(0, 1, 0, 0))
 plot(aLowData$sec[keep] / 60, aLowData$raw[keep], type = "l", col = "grey60",
      ylab = "EDA", xlab = "Minute",
-     cex.lab = 1.75, cex.axis = 1.75, cex.main = 1.75)
+     cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5)
 lines(smooth, type = "l")
 lines(smooth$x[thin], smooth$y[thin], type = "l", col = "red")
 legend("topright", legend = c("Raw", "Smoothed", "Thinned"),
-       col = c("grey60", "black", "red"), lwd = 2, inset = 0.02, cex = 1.75)
+       col = c("grey60", "black", "red"), lwd = 2, inset = 0.02, cex = 1.5)
 dev.off()
 
 aLowThin <- do.call(rbind, lowThinList)
@@ -292,8 +292,15 @@ aHighThin$y <- log(aHighThin$y + 0.001, 10)
 groupA <- rbind(cbind(aLowThin, high = 0, type = "low"),
       cbind(aHighThin, high = 1, type = "high"))
 
+
 # write to file
-write.csv(groupA, file.path(path, "groupA.csv"), row.names = FALSE)
+# write.csv(groupA, file.path(path, "groupA.csv"), row.names = FALSE)
+
+groupA <- read.csv("groupA.csv")
+
+groupA$type <- factor(groupA$type, levels = c("low", "high"))
+
+levels(groupA$type) <- c("Low vigilance", "High vigilance")
 
 # plot processed data
 ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
@@ -302,6 +309,17 @@ ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
   labs(x = "Minute", y = expression(paste("lo",g[10],"(EDA + 0.001)")))+
   scale_color_discrete("Vigilance", labels = c("Low", "High"))
 ggsave(file.path(paperPath, "groupA_processed.png"))
+
+# plot processed data
+
+dev.new(width = 8, height = 5)
+ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
+  geom_line()+
+  theme_bw(18)+
+  facet_wrap(~ type) +
+  labs(x = "Minute", y = expression(paste("lo",g[10],"(EDA)")))+
+  scale_color_manual(guide = FALSE, values = c("red", "blue"))
+ggsave(file.path(paperPath, "eda_data_split.png"))
 
 groupA <- read.csv(file.path(path, "groupA.csv"))
 library(dplyr)

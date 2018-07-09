@@ -50,7 +50,6 @@ cvOut$smoothOpt
 system.time({
   a1 <- admm(y = "y", id = "id", X = X, rand = rand,
              lambda = cvOut$smoothOpt[-1],
-             tau = cvOut$smoothOpt[1],
              lmeUpdate = TRUE,
              rho = min(5, max(cvOut$smoothOpt)),
              centerZ = FALSE,
@@ -121,7 +120,7 @@ dev.new()
 ggplot(aes(x = x, y = y), data = simData2groups)+
   geom_polygon(data = CIpoly, fill = "grey") +
   geom_line(data = trueInteraction, color = "black", size = 1) +
-  geom_line(aes(y = yHat), data = trueInteraction, color = "red", size = 1)+
+  geom_line(aes(y = yHat), data = trueInteraction, color = "purple", size = 1)+
   geom_hline(yintercept = 0, linetype = "dashed") +
   theme_bw(30) +
   scale_y_continuous(lim = c(-0.5, 1.25))
