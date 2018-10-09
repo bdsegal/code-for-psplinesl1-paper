@@ -1,4 +1,3 @@
-# run on cluster
 args <- commandArgs(trailingOnly = TRUE)
 M <- args[1]
 
@@ -120,6 +119,3 @@ for (iter in 1:100) {
 }
 
 save(results, file = paste("batch/results", M, ".RData", sep = ""))
-
-# plot(fit$x, fit$yHatL1, type = "l", col = "red")
-# lines(fit$x, fit$yHatL2)

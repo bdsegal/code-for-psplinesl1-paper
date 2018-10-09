@@ -1,15 +1,9 @@
-
 library(psplinesl1)
 library(reshape2)
 
-if(length(grep("bdsegal",getwd()))>0 ){
-  computer <- "C:/Users/bdsegal"
-} else{
-	computer <- "/home/bsegal"
-}
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
 # load existing data
 data(simData2groups)
@@ -39,8 +33,7 @@ system.time({cvOut <- cv(y = "y",
  # 77.848   0.004  77.926 
 
 dev.new(width = 10, height = 5)
-cvOut$gg + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+cvOut$gg + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(file.path(presentPath, "cv_2groups.png"))
 
 cvOut$smoothOpt
@@ -126,30 +119,3 @@ ggplot(aes(x = x, y = y), data = simData2groups)+
   scale_y_continuous(lim = c(-0.5, 1.25))
 ggsave(file.path(paperPath,"l1_2groups_group1.png"))
 ggsave(file.path(presentPath,"l1_2groups_group1.png"))
-
-# predicted curves
-simData2groups$yHat <- a1$fit$yHat
-trueAdd <- data.frame(x = trueMean$x, y = trueInteraction$y,
-                      id = 0)
-dev.new()
-ggplot(aes(x = x, y = y, group = id), data = simData2groups)+
-  geom_point(color = "grey")+
-  geom_line(color = "grey")+
-  geom_line(aes(y = yHat), color = "blue", linetype = "dashed")+
-  geom_line(data = trueMean, color = "black", size = 1)+
-  geom_line(data = trueAdd, color = "black", size = 1)+
-  geom_line(aes(y = yHat), data = trueMean, color = "red", size = 1)+
-  geom_line(aes(y = yHat), data = trueInteraction, color = "red", size = 1)+
-  theme_bw(24)
-# ggsave(file.path(paperPath,"l1_changePoint_point_ord2.png"))
-
-dev.new()
-ggplot(aes(x = x, y = y, group = id), data = simData2groups)+
-  geom_point(color = "grey")+
-  geom_line(color = "grey")+
-  geom_line(aes(y = yHat), color = "blue", linetype = "dashed")+
-  geom_line(data = trueMean, color = "black", size = 1)+
-  geom_line(aes(y = yHat), data = trueMean, color = "red", size = 1)+
-  theme_bw(30)
-# ggsave(file.path(paperPath,"l1_changePoint_point_ord2_poster.png"))
-# ggsave(file.path(presentPath,"l1_changePoint_point_ord2_poster.png"))

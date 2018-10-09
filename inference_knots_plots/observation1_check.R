@@ -1,4 +1,3 @@
-
 # code for confirming Observation 1
 bspline <- function(x, i, m, tau) {
   n <- length(x)
@@ -25,13 +24,8 @@ bspline <- function(x, i, m, tau) {
   }
 }
 
-M <- 4
+M <- 2
 x <- seq(0, 1, .05)
-
-tau <- c(rev(seq(0, by = -0.1, length.out = M)),
-         seq(0, 1, length.out = p+2)[-c(1,p+2)],
-         seq(1, by = 0.1, length.out = M)
-         )
 
 tau <- c(rev(seq(0, by = -0.1, length.out = M)),
          x[-c(1,length(x))],
@@ -41,7 +35,6 @@ tau <- c(rev(seq(0, by = -0.1, length.out = M)),
 c <- length(tau) - 2*M
 p <- M + c
 
-x <- seq(0,1,.05)
 n <- length(x)
 F <- matrix(nrow = n, ncol = p)
 for (j in 1:p) {
@@ -53,14 +46,3 @@ for (j in 1:p) {
 matplot(x = x, F,type = "l")
 
 sum(abs(F-diag(n)))
-
-# with splines package
-library(splines)
-y <- seq(0,1, 0.01)
-matplot(splineDesign(knots = tau, x = y, ord = M), type = "l")
-
-# with FDA package
-library(fda)
-basis <- create.bspline.basis(breaks = seq(0,1,0.1),
-                              norder = 4)
-matplot(x = y, eval.basis(y, basis), type = "l")

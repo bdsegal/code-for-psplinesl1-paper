@@ -1,15 +1,9 @@
-
 library(psplinesl1)
 library(reshape2)
 
-if(length(grep("bdsegal",getwd()))>0 ){
-  computer <- "C:/Users/bdsegal"
-} else{
-	computer <- "/home/bsegal"
-}
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
 # load existing data
 data(simData)
@@ -101,16 +95,6 @@ ggplot(aes(x = x, y = y), data = simData)+
 ggsave(file.path(paperPath,"l1_changePoint_CI_ord2_Bayes_poster.png"))
 ggsave(file.path(presentPath,"l1_changePoint_CI_ord2_Bayes_poster.png"))
 
-
-# example plot for package using only CI and no baseline truth
-CIpoly <- data.frame(x = c(CI[[1]]$x, rev(CI[[1]]$x)), 
-                     y = c(CI[[1]]$lower, rev(CI[[1]]$upper)))
-
-ggplot(aes(x = x, y = y), data = simData)+
-  geom_polygon(data = CIpoly, fill = "grey")+
-  geom_line(aes(x = CI[[1]]$x, y = CI[[1]]$smooth), size = 1)+
-  theme_bw(18)
-
 # predicted curves
 simData$yHat <- a1$fit$yHat
 
@@ -132,5 +116,5 @@ ggplot(aes(x = x, y = y, group = id), data = simData)+
   geom_line(data = trueMean, color = "black", size = 1)+
   geom_line(aes(y = yHat), data = trueMean, color = "red", size = 1)+
   theme_bw(30)
-ggsave(file.path(paperPath,"l1_changePoint_point_ord2_poster.png"))
+ggsave(file.path(posterPath,"l1_changePoint_point_ord2_poster.png"))
 ggsave(file.path(presentPath,"l1_changePoint_point_ord2_poster.png"))

@@ -1,11 +1,10 @@
-iterMax <- 1000
-
 library(psplinesl1)
 library(mgcv)
 library(reshape2)
-library(ggplot2)
 
-paperPath <- "/home/bsegal/Dropbox/Research/psplines_L1_penalty/paper/plots"
+iterMax <- 1000
+
+paperPath <- "../../paper/plots"
 
 # Simulate data ---------------------------------------------------------------
 xsim <- seq(0, 1, 0.01)
@@ -134,10 +133,6 @@ load("cp_sim.RData")
 cp1mean <- apply(cp1, 1, mean, na.rm = TRUE)
 cp2mean <- apply(cp2, 1, mean, na.rm = TRUE)
 
-plot(xsim, cp1mean, type = "b", ylim = c(0, 1))
-points(xsim, cp2mean, type = "b", col = "blue")
-abline(h = 0.95)
-
 cp <- data.frame(x = rep(xsim, times = 2), 
                  mean = c(cp1mean, cp2mean),
                  Penalty = rep(c("L1", "L2"), each = length(xsim)))
@@ -148,7 +143,6 @@ dev.new(width = 7, height = 5)
 ggplot(aes(x = x, y = mean, color = Penalty, shape = Penalty), data = cp) +
   geom_point() +
   geom_line() +
-  # geom_errorbar(aes(ymin = lower, ymax = upper)) +
   theme_bw(18) +
   geom_hline(yintercept = 0.95, linetype = "dashed") +
   scale_y_continuous(lim = c(0.6, 1)) +
@@ -156,9 +150,3 @@ ggplot(aes(x = x, y = mean, color = Penalty, shape = Penalty), data = cp) +
   scale_color_discrete(labels = c(quote('\u2113'[1]), quote('\u2113'[2]))) +
   scale_shape_discrete(labels = c(quote('\u2113'[1]), quote('\u2113'[2])))
 ggsave(file.path(paperPath, "cp.png"))
-
-# width
-width1mean <- apply(width1, 1, mean, na.rm = TRUE)
-width2mean <- apply(width2, 1, mean, na.rm = TRUE)
-plot(xsim, width1mean, type = "b", ylim = range(width1mean, width2mean))
-points(xsim, width2mean, type = "b", col = "blue")

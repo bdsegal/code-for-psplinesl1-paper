@@ -1,20 +1,11 @@
-
 library(psplinesl1)
-library(fda)
 library(mgcv)
-library(reshape2)
-library(ggplot2)
 
-if(length(grep("bdsegal",getwd()))>0 ){
-  computer <- "C:/Users/bdsegal"
-} else{
-  computer <- "/home/bsegal"
-}
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
-# load existing data
+# load data
 data(simData2groups)
 data(trueMean)
 data(trueInteraction)

@@ -1,30 +1,16 @@
-# analyze EDA data
-
 library(fda)
 library(mgcv)
 library(ggplot2)
 library(reshape2)
 
-if(length(grep("bdsegal",getwd()))>0 ) {
-    path <- "C:/Users/bdsegal/Documents/vigilance"
-    computer <- "C:/Users/bdsegal"
-} else {
-  path <- "/home/bsegal/Documents/Research/data_empatica"
-  computer <- "/home/bsegal"
-}
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
-
-marDefault <- c(5, 4, 4, 2) + 0.1 
-
-# source(file.path(computer,"Dropbox/Research/psplines_L1_penalty/Rpackage/psplinesL1/R/l1mixedPackage.R"))
-# source(file.path(computer,"Dropbox/Research/psplines_L1_penalty/Rpackage/psplinesL1/R/L1_CV.R"))
+path <- "/home/bsegal/Documents/Research/data_empatica"
 
 # data prep -------------------------------------------------------------------
-groupA <- read.csv(file.path(path, "groupA.csv"))
-data <- groupA
+data <- read.csv(file.path(path, "groupA.csv"))
 data <- data[with(data, order(id, x)), ]
 n <- table(data$id)
 
@@ -73,11 +59,6 @@ summary(g2$gam)
 plot(g2$gam)
 
 VC <- VarCorr(g2$lme)
-lambdaGAMM <-as.numeric(VC[nrow(VC), 1]) / as.numeric(VC[2,1])
-tauGAMM <-as.numeric(VC[nrow(VC), 1]) / as.numeric(VC[nrow(VC) - 1,1])
-cbind(tauGAMM, lambdaGAMM)
-#         tauGAMM lambdaGAMM
-# [1,] 0.01016958  0.6052437
 
 # sigma2epsilon, sigma2beta, sigma2b
 c(as.numeric(VC[nrow(VC), 1]), as.numeric(VC[2,1]), as.numeric(VC[nrow(VC) - 1,1]))

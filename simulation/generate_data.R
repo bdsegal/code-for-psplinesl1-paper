@@ -1,4 +1,3 @@
-
 library(reshape2)
 library(fda)
 
@@ -50,6 +49,5 @@ simData <- dat[keep, ]
 leave <- sample(size = nrow(simData) / 1.75, 1:nrow(simData))
 simData <- simData[! 1:nrow(simData) %in% leave, ]
 
-nrow(simData)
-# write.csv(simData, file = "simData.csv", row.names = FALSE)
-# write.csv(trueMean, file = "trueMean.csv", row.names = FALSE)
+write.csv(simData, file = "simData.csv", row.names = FALSE)
+write.csv(trueMean, file = "trueMean.csv", row.names = FALSE)

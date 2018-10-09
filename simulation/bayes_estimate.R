@@ -1,24 +1,15 @@
-
 library(psplinesl1)
 library(rstan)
 
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-marDefault <- c(5, 4, 4, 2) + 0.1 
 
-if(length(grep("bdsegal",getwd())) > 0) {
-    computer <- "C:/Users/bdsegal"
-} else {
-  computer <- "/home/bsegal"
-}
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
-source(file.path(computer,"Dropbox/Research/psplines_L1_penalty/Rpackage/psplinesL1/R/l1mixedPackage.R"))
-# source(file.path(computer,"Dropbox/Research/psplines_L1_penalty/Rpackage/psplinesL1/R/L1_CV.R"))
-
-simData <- read.csv("simData.csv")
-trueMean <- read.csv("trueMean.csv")
+data(simData)
+data(trueMean)
 n <- table(simData$id)
 N <- length(n)
 
@@ -59,7 +50,6 @@ rm(fitNorm)
 fitNoPen <- stan(file="bayes_noPen.stan", data=stanDat, iter=2000, chains=4)
 save(fitNoPen, file = "fit_noPen.RData")
 rm(fitNoPen)
-
 
 # plot results ----------------------------------------------------------------
 

@@ -1,12 +1,13 @@
 # Plotting EDA measurements from E3 Wristband
-
 library(ggplot2)
+library(dplyr)
 
-#TODO: Get times of tags
+# Data in these paths are not publicly available
 path <- "/home/bsegal/Documents/Research/data_empatica"
 dataPath <- "/home/bsegal/Documents/Research/data_empatica/data_complete/unzipped/"
-paperPath <- "/home/bsegal/Dropbox/Research/psplines_L1_penalty/paper/plots"
-presentPath <- "/home/bsegal/Dropbox/Research/psplines_L1_penalty/presentation/plots"
+
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
 
 marDefault <- c(5, 4, 4, 2) + 0.1 
 
@@ -31,12 +32,6 @@ getDataFun <- function(path, outcome, subject){
   
   # create vector of seconds (in 1/Hz increments)
   sec <- (0:(len - 1)) / Hz
-
-  # convert initial time stamp to time of day
-  # t1 <- as.POSIXct(initialTime, origin = "1970-01-01")
-
-  # add initial time to vector of seconds get a vector of time of day
-  # time <- sec + t1
 
   # put data in a data frame for ggplot
   data <- data.frame(raw = raw, sec = sec)
@@ -82,7 +77,6 @@ for (g in groups) {
       main = paste(g, " ", v, ", ", length(subj), " subjects", sep = ""), 
       xlab = "Minute", ylab = "EDA",
       cex.lab = 1.9, cex.axis = 1.9, cex.main = 1.9)
-    # abline(v = EDAlist[[subj[1]]]$tags$sec, lty = 3)
     for (i in 2:length(subj)) {
       points(x = EDAlist[[subj[i]]]$data$sec / 60, y = EDAlist[[subj[i]]]$data$raw,
         type = "l", cex.lab = 1.9, cex.axis = 1.9, col = i)
@@ -92,7 +86,6 @@ for (g in groups) {
 dev.off()
 
 # original scale, just group A
-
 png(filename = file.path(paperPath, "EDA_by_group_A.png"), height = 400, width = 800)
 par(mfrow = c(1, 2), mar = marDefault + c(0, 1, 0, 0))
 for (g in c("A")) {
@@ -104,7 +97,6 @@ for (g in c("A")) {
       main = paste(v, " vigilance", sep = ""), 
       xlab = "Minute", ylab = "EDA",
       cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5)
-    # abline(v = EDAlist[[subj[1]]]$tags$sec, lty = 3)
     for (i in 2:length(subj)) {
       points(x = EDAlist[[subj[i]]]$data$sec / 60, y = EDAlist[[subj[i]]]$data$raw,
         type = "l", cex.lab = 1.5, cex.axis = 1.5, col = i)
@@ -125,7 +117,6 @@ for (g in groups) {
       main = paste(g, " ", v, ", ", length(subj), " subjects", sep = ""), 
       xlab = "Minute", ylab = "EDA",
       cex.lab = 1.9, cex.axis = 1.9, cex.main = 1.9)
-    # abline(v = EDAlist[[subj[1]]]$tags$sec, lty = 3)
     for (i in 2:length(subj)) {
       points(x = EDAlist[[subj[i]]]$data$sec / 60, y = EDAlist[[subj[i]]]$data$raw,
         type = "l", cex.lab = 1.9, cex.axis = 1.9, col = i)
@@ -137,7 +128,7 @@ for (g in groups) {
 }
 dev.off()
 
-# original scale - pickout reliable measurements
+# original scale - pick out reliable measurements
 g <- groups[1]
 v <- vigLevel[1]
 par(mar = marDefault + c(0, 1, 0, 0))
@@ -156,10 +147,6 @@ for (i in 1:length(subj)) {
 # A low
 aLowID <- c(1587013955, 5391983104, 6016633856, 6781066752, 
           7803223040, 8471556096, 9126784000)
-
-# maybe...
-# 6781066752
-# 8305564672
 
 # original scale - pickout reliable measurements
 g <- groups[1]
@@ -181,11 +168,6 @@ for (i in 1:length(subj)) {
 aHighID <- c(1879278988, 5448769536, 5553606144, 5723965440, 
              6650021376, 7672177664, 8379824128, 8414769664,
              8641914880, 9279671296)
-
-# maybe...
-# 6484029952
-# 7702754816
-# 9279671296
 
 # plot reliable measurements
 aLowSubj <- which(names(EDAlist) %in% aLowID)
@@ -227,8 +209,6 @@ for (i in unique(aLowData$id)) {
   keep <- which(aLowData$id == i)
   smooth <- ksmooth(x = aLowData$sec[keep], y = aLowData$raw[keep], bandwidth = 50)
 
-  # to do: thin data proportional to curvature
-  # p <- abs(diff(ySmooth$y)) / sum(abs(diff(ySmooth$y)))
   thin <- seq(1, length(smooth$x), length = 100)
   lowThinList[[i]] <- data.frame(x = smooth$x[thin], y = smooth$y[thin], id = i)
   # plot(aLowData$sec[keep], aLowData$raw[keep], type = "l", col = "grey")
@@ -272,8 +252,6 @@ for (i in unique(aHighData$id)) {
   keep <- which(aHighData$id == i)
   smooth <- ksmooth(x = aHighData$sec[keep], y = aHighData$raw[keep], bandwidth = 50)
   
-  # to do: thin data proportional to curvature
-  # p <- abs(diff(ySmooth$y)) / sum(abs(diff(ySmooth$y)))
   thin <- seq(1, length(smooth$x), length = 100)
   highThinList[[i]] <- data.frame(x = smooth$x[thin], y = smooth$y[thin], id = i)
   # plot(aHighData$sec[keep], aHighData$raw[keep], type = "l", col = "grey")
@@ -290,8 +268,7 @@ aHighThin$y <- log(aHighThin$y + 0.001, 10)
 
 # low and high groups together
 groupA <- rbind(cbind(aLowThin, high = 0, type = "low"),
-      cbind(aHighThin, high = 1, type = "high"))
-
+                cbind(aHighThin, high = 1, type = "high"))
 
 # write to file
 # write.csv(groupA, file.path(path, "groupA.csv"), row.names = FALSE)
@@ -303,15 +280,6 @@ groupA$type <- factor(groupA$type, levels = c("low", "high"))
 levels(groupA$type) <- c("Low vigilance", "High vigilance")
 
 # plot processed data
-ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
-  geom_line()+
-  theme_bw(20)+
-  labs(x = "Minute", y = expression(paste("lo",g[10],"(EDA + 0.001)")))+
-  scale_color_discrete("Vigilance", labels = c("Low", "High"))
-ggsave(file.path(paperPath, "groupA_processed.png"))
-
-# plot processed data
-
 dev.new(width = 8, height = 5)
 ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
   geom_line()+
@@ -320,8 +288,3 @@ ggplot(aes(x = x, y = y, group = id, color = as.factor(type)), data = groupA)+
   labs(x = "Minute", y = expression(paste("lo",g[10],"(EDA)")))+
   scale_color_manual(guide = FALSE, values = c("red", "blue"))
 ggsave(file.path(paperPath, "eda_data_split.png"))
-
-groupA <- read.csv(file.path(path, "groupA.csv"))
-library(dplyr)
-groupA %>% group_by(type, id) %>%
-  summarize(n = n())

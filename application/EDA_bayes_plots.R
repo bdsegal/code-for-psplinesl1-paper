@@ -1,24 +1,15 @@
-
 library(rstan)
 library(fda)
 library(reshape2)
 
-if(length(grep("bdsegal",getwd()))>0 ) {
-    path <- "C:/Users/bdsegal/Documents/vigilance"
-    computer <- "C:/Users/bdsegal"
-} else {
-  path <- "/home/bsegal/Documents/Research/data_empatica"
-  computer <- "/home/bsegal"
-}
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
+path <- "/home/bsegal/Documents/Research/data_empatica"
 
 # data prep -------------------------------------------------------------------
-# groupA <- read.csv("groupA.csv")
-groupA <- read.csv(file.path(path, "groupA.csv"))
-data <- groupA
+data <- read.csv(file.path(path, "groupA.csv"))
 data <- data[with(data, order(id, x)), ]
 n <- table(data$id)
 ord <- order(data$x)
@@ -26,7 +17,6 @@ ord <- order(data$x)
 # View results ----------------------------------------------------------------
 # load("bayes_cauchy/sqrt_stanDat_cauchy.RData")
 # load("bayes_cauhcy/EDA_lap_sqrt_cauchy.RData")
-
 load("bayes_norm/sqrt_stanDat_norm.RData")
 load("bayes_norm/EDA_lap_sqrt_norm.RData")
 
@@ -39,7 +29,7 @@ for(j in 1:length(X)) {
 # WARNING: these might take a long time to load
 traceplot(fitLap, pars = c("Dbeta1"), inc_warmup = FALSE)
 traceplot(fitLap, pars = c("sigmaEpsilon", "sigmaB", "sigmaB2",
-          "sigmaLambda1", "logsigmaLambda2"), inc_warmup = FALSE)
+                           "sigmaLambda1", "logsigmaLambda2"), inc_warmup = FALSE)
 traceplot(fitLap, pars = c("beta0"), inc_warmup = FALSE)
 traceplot(fitLap, pars = c("beta1"), inc_warmup = FALSE)
 traceplot(fitLap, pars = c("beta2"), inc_warmup = FALSE)

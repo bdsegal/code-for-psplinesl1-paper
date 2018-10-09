@@ -1,15 +1,8 @@
-
 library(reshape2)
 library(ggplot2)
 
-if(length(grep("bdsegal",getwd())) > 0){
-  computer <- "C:/Users/bdsegal"
-} else{
-  computer <- "/home/bsegal"
-}
-
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
 
 getInflect <- function(cut, dat, resFlat) {
   # function for getting inflection point statistics for different cutoff values

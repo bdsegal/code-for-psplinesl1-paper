@@ -1,17 +1,15 @@
+# This script must be run after fitting the l1 penalized model
+# for the simulated data (a1) and for the EDA data (m1)
+# NOTE: This script cannot be run directly.
 
 library(reshape2)
 
-if(length(grep("bdsegal",getwd())) > 0){
-  computer <- "C:/Users/bdsegal"
-} else{
-  computer <- "/home/bsegal"
-}
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
 # plot for paper --------------------------------------------------------------
-# must fit models a1 and m1 first in files 
+# must fit models a1 (simulation) and m1 (EDM data) first 
 
 # set model equal to a1 or m1
 model <- a1
@@ -43,7 +41,6 @@ for (l in (1:J)[-j]) {
 R <- as.vector(rho * solve(crossprod(F) + rho * crossprod(D), crossprod(D, w - u)))
 Hy <- as.vector(Hlambda %*% yj)
 HyR <- as.vector(Hrho %*% yj + F %*% R)
-# Hr <- rho * F %*% solve(t(F) %*% F + rho * t(D) %*% D, t(D))
 
 if (j == 1) {
   Hy <- Hy + beta0

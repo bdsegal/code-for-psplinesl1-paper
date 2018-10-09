@@ -1,4 +1,3 @@
-
 library(reshape2)
 library(fda)
 library(ggplot2)

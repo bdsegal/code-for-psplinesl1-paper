@@ -1,25 +1,16 @@
 # analyze EDA data
-
 library(psplinesl1)
 library(reshape2)
 
-if(length(grep("bdsegal",getwd()))>0 ) {
-    path <- "C:/Users/bdsegal/Documents/vigilance"
-    computer <- "C:/Users/bdsegal"
-} else {
-	path <- "/home/bsegal/Documents/Research/data_empatica"
-  computer <- "/home/bsegal"
-}
+paperPath <- "../../paper/plots"
+presentPath <- "../../presentation/plots"
+posterPath <- "../../poster/plots"
 
-paperPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/paper/plots")
-presentPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/presentation/plots")
-posterPath <- file.path(computer, "Dropbox/Research/psplines_L1_penalty/poster/plots")
+path <- "/home/bsegal/Documents/Research/data_empatica"
 
 # data prep -------------------------------------------------------------------
-groupA <- read.csv(file.path(path, "groupA.csv"))
-data <- groupA
+data <- read.csv(file.path(path, "groupA.csv"))
 data <- data[with(data, order(id, x)), ]
-# n <- table(data$id)
 
 # setup design matrices
 X <- list(ps(x = "x", norder = 4, k = 1, data = data, width = 5),
@@ -34,17 +25,6 @@ colnames(S) <- colnames(rand$S)
 rownames(S) <- rownames(rand$S)
 rand$S <- S
 
-# # fitting one path at a time --------------------------------------------------
-# system.time({cvOut <- cv(y = "y", X = X,
-#              rand = rand,
-#              id = "id",
-#              K = 3,
-#              data = data,
-#              se1 = FALSE)
-#              })
-# save(cvOut, file = "cvOut_EDA_smoothInit0.Rdata")
-
-# To do: implement lme for random curves
 system.time({
   m1 <- admm(y = "y", X = X, rand = rand,
              id = "id",
